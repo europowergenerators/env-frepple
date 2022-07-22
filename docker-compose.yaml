@@ -1,0 +1,40 @@
+version: "3.0"
+services:
+
+  frepple:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - "FREPPLE_VERSION=6.23.1.enterprise"
+    container_name: frepple-webserver
+    ports:
+      - "9000:80"
+    depends_on:
+      - frepple-postgres
+    networks:
+      - backend
+    volumes:
+      - log-apache:/var/log/apache2
+      - log-frepple:/var/log/frepple
+      - config-frepple:/etc/frepple
+    env_file:
+      - frepple.env
+    # environment:
+
+  frepple-postgres:
+    image: "postgres:13"
+    container_name: frepple-postgres
+    networks:
+      - backend
+    env_file:
+      - frepple.env
+    # environment:
+
+volumes:
+  log-apache:
+  log-frepple:
+  config-frepple:
+
+networks:
+  backend:
